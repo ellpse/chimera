@@ -27,6 +27,8 @@ const std::string color_reset = "\033[0m";
 const std::string color_blue = "\033[34m";
 const std::string color_green = "\033[32m";
 
+const std::string VERSION = "chimera v1.7";
+
 std::string path = "/";
 std::string previous_path = "/";
 std::vector<std::string> commands;
@@ -2297,6 +2299,8 @@ int main() {
     if (!user) {
         user = "user";
     }
+
+    std::cout << VERSION << '\n';
 
     while (!should_exit_shell) {
         const char* hostname_env =

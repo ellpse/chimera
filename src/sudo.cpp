@@ -13,6 +13,7 @@
 #include <cerrno>
 #include <cstdlib>
 #include <pwd.h>
+#include <sha256.h>
 
 class SHA256 {
 private:

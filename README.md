@@ -1,2 +1,2 @@
-# eulerOS
+# chimera
 yes
