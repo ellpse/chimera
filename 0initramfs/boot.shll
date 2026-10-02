@@ -14,9 +14,9 @@ chroot /root
 mount -t proc proc /proc
 mount -t sysfs none /sys
 mount -t devtmpfs devtmpfs /dev
-echo "2 4 1 7" ">" /proc/sys/kernel/printk
+echo "2 4 1 7" ">" /proc/sys/kernel/printk //stops stupid kernel info from being FORCED into my shell.
 echo "starting processes..."
-shll /autostart/autostart.shll
+shll /autostart/autostart.shll //this runs anything needed to be ran BEFORE the login loop begins.
 
 
 login
