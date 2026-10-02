@@ -1,0 +1,3 @@
+ll='ls -alh'
+l='ls -alh'
+edit='cedit'

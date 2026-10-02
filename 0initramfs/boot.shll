@@ -1,0 +1,22 @@
+set rootpart=sda1
+mkdir proc
+mount -t proc proc /proc
+mkdir sys
+mount -t sysfs none /sys
+mount -t devtmpfs devtmpfs /dev
+echo "pseudo file systems have been mounted."
+mount -t ext4 /dev/$rootpart /root
+echo "mounted $rootpart to /root"
+umount /proc
+umount /sys
+umount /dev
+chroot /root
+mount -t proc proc /proc
+mount -t sysfs none /sys
+mount -t devtmpfs devtmpfs /dev
+echo "2 4 1 7" ">" /proc/sys/kernel/printk
+echo "starting processes..."
+shll /autostart/autostart.shll
+
+
+login

@@ -1,0 +1,2 @@
+# eulerOS
+yes
