@@ -14,10 +14,10 @@
 #include <time.h>
 #include <stdarg.h>
 
-/* ============================================================
- * CEDIT
- * Small terminal C/C++ editor
- * ============================================================ */
+
+//yes, this is kind of a 'god' file, but its jsut small enough to be not retarded to be in one file.
+
+
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
@@ -27,13 +27,12 @@
 
 #define ABUF_INIT {NULL, 0}
 
-/* Highlight flags */
+ 
 #define HL_HIGHLIGHT_NUMBERS (1 << 0)
 #define HL_HIGHLIGHT_STRINGS (1 << 1)
 
-/* ============================================================
- * Keys
- * ============================================================ */
+
+
 
 enum editorKey {
     BACKSPACE = 127,
@@ -48,9 +47,8 @@ enum editorKey {
     PAGE_DOWN
 };
 
-/* ============================================================
- * Syntax highlighting
- * ============================================================ */
+
+
 
 enum editorHighlight {
     HL_NORMAL = 0,
@@ -67,9 +65,8 @@ enum editorHighlight {
     HL_OPERATOR
 };
 
-/* ============================================================
- * Editor row
- * ============================================================ */
+
+
 
 typedef struct erow {
     int size;
@@ -84,9 +81,8 @@ typedef struct erow {
     int hl_open_comment;
 } erow;
 
-/* ============================================================
- * Syntax definition
- * ============================================================ */
+
+
 
 struct editorSyntax {
     char *filetype;
@@ -100,9 +96,8 @@ struct editorSyntax {
     int flags;
 };
 
-/* ============================================================
- * Editor configuration
- * ============================================================ */
+
+
 
 struct editorConfig {
     struct termios orig_termios;
@@ -134,9 +129,8 @@ struct editorConfig {
 
 struct editorConfig E;
 
-/* ============================================================
- * C / C++ syntax database
- * ============================================================ */
+
+
 
 char *C_HL_extensions[] = {
     ".c",
@@ -151,7 +145,7 @@ char *C_HL_extensions[] = {
 };
 
 char *C_HL_keywords[] = {
-    /* Control flow */
+     
     "if",
     "else",
     "for",
@@ -165,7 +159,7 @@ char *C_HL_keywords[] = {
     "return",
     "goto",
 
-    /* C */
+     
     "struct",
     "union",
     "enum",
@@ -178,7 +172,7 @@ char *C_HL_keywords[] = {
     "restrict",
     "inline",
 
-    /* C++ */
+     
     "class",
     "public",
     "private",
@@ -211,7 +205,7 @@ char *C_HL_keywords[] = {
     "reinterpret_cast",
     "const_cast",
 
-    /* Types */
+     
     "void|",
     "char|",
     "short|",
@@ -226,7 +220,7 @@ char *C_HL_keywords[] = {
     "size_t|",
     "ptrdiff_t|",
 
-    /* Standard library */
+     
     "std|",
     "string|",
     "vector|",
@@ -247,14 +241,14 @@ char *C_HL_keywords[] = {
     "shared_ptr|",
     "weak_ptr|",
 
-    /* Streams */
+     
     "cout|",
     "cin|",
     "cerr|",
     "clog|",
     "endl|",
 
-    /* Common C library */
+     
     "printf|",
     "fprintf|",
     "sprintf|",
@@ -291,9 +285,8 @@ struct editorSyntax HLDB[] = {
 #define HLDB_ENTRIES \
 (sizeof(HLDB) / sizeof(HLDB[0]))
 
-/* ============================================================
- * Prototypes
- * ============================================================ */
+
+
 
 void editorSetStatusMessage(const char *fmt, ...);
 void editorRefreshScreen(void);
@@ -316,9 +309,8 @@ void editorDelChar(void);
 
 void editorMoveCursor(int key);
 
-/* ============================================================
- * Terminal
- * ============================================================ */
+
+
 
 void die(const char *s)
 {
@@ -367,9 +359,8 @@ void enableRawMode(void)
         }
 }
 
-/* ============================================================
- * Input
- * ============================================================ */
+
+
 
 int editorReadKey(void)
 {
@@ -467,9 +458,8 @@ int editorReadKey(void)
         return c;
 }
 
-/* ============================================================
- * Window
- * ============================================================ */
+
+
 
 int getCursorPosition(int *rows, int *cols)
 {
@@ -542,9 +532,8 @@ int getWindowSize(int *rows, int *cols)
         return 0;
 }
 
-/* ============================================================
- * Syntax helpers
- * ============================================================ */
+
+
 
 int is_separator(int c)
 {
@@ -562,16 +551,8 @@ int is_operator_char(char c)
         c) != NULL;
 }
 
-/*
- * Check whether a rendered line is an #include line.
- *
- * Examples:
- *
- * #include <iostream>
- *   #include "stdio.h"
- *
- * Leading whitespace is allowed.
- */
+
+
 int is_include_line(const char *s, int len)
 {
     int i = 0;
@@ -611,41 +592,40 @@ int is_include_line(const char *s, int len)
         s[i] == '"';
 }
 
-/* ============================================================
- * Syntax highlighting
- * ============================================================ */
+
+
 
 int editorSyntaxToColor(int hl)
 {
     switch (hl) {
         case HL_COMMENT:
         case HL_MLCOMMENT:
-            return 36; /* cyan */
+            return 36;  
 
         case HL_KEYWORD1:
-            return 33; /* yellow */
+            return 33;  
 
         case HL_KEYWORD2:
         case HL_TYPE:
-            return 32; /* green */
+            return 32;  
 
         case HL_STRING:
-            return 35; /* magenta */
+            return 35;  
 
         case HL_NUMBER:
-            return 31; /* red */
+            return 31;  
 
         case HL_MATCH:
-            return 44; /* blue background */
+            return 44;  
 
         case HL_PREPROCESSOR:
-            return 91; /* bright red */
+            return 91;  
 
         case HL_FUNCTION:
-            return 96; /* bright cyan */
+            return 96;  
 
         case HL_OPERATOR:
-            return 94; /* bright blue */
+            return 94;  
 
         default:
             return 37;
@@ -716,11 +696,8 @@ void editorUpdateSyntax(erow *row)
             row->render[first_nonspace] == '#') {
             preprocessor = 1;
 
-        /*
-         * Give the whole preprocessor line its
-         * base color first. Strings/header names
-         * will override it below.
-         */
+        
+
         for (int j = first_nonspace;
              j < row->rsize;
             j++) {
@@ -745,9 +722,8 @@ void editorUpdateSyntax(erow *row)
                 ? row->hl[i - 1]
                 : HL_NORMAL;
 
-                /* ----------------------------------------------------
-                 * Multi-line comments
-                 * ---------------------------------------------------- */
+                
+
 
                 if (in_comment) {
                     row->hl[i] = HL_MLCOMMENT;
@@ -781,9 +757,8 @@ void editorUpdateSyntax(erow *row)
                             continue;
                 }
 
-                /* ----------------------------------------------------
-                 * Single-line comments
-                 * ---------------------------------------------------- */
+                
+
 
                 if (!in_string &&
                     scs_len &&
@@ -801,9 +776,8 @@ void editorUpdateSyntax(erow *row)
                     break;
                         }
 
-                        /* ----------------------------------------------------
-                         * Start multi-line comment
-                         * ---------------------------------------------------- */
+                        
+
 
                         if (!in_string &&
                             mcs_len &&
@@ -824,16 +798,8 @@ void editorUpdateSyntax(erow *row)
                             continue;
                                 }
 
-                                /* ----------------------------------------------------
-                                 * C++ #include <header>
-                                 *
-                                 * Treat the entire angle-bracket header as a string.
-                                 * This makes:
-                                 *
-                                 * #include <iostream>
-                                 *
-                                 * behave more naturally.
-                                 * ---------------------------------------------------- */
+                                
+
 
                                 if (include_line &&
                                     !in_string &&
@@ -860,9 +826,8 @@ void editorUpdateSyntax(erow *row)
                                     }
                                     }
 
-                                    /* ----------------------------------------------------
-                                     * Strings
-                                     * ---------------------------------------------------- */
+                                    
+
 
                                     if (E.syntax->flags &
                                         HL_HIGHLIGHT_STRINGS) {
@@ -903,9 +868,8 @@ void editorUpdateSyntax(erow *row)
                                             }
                                         }
 
-                                        /* ----------------------------------------------------
-                                         * Numbers
-                                         * ---------------------------------------------------- */
+                                        
+
 
                                         if (E.syntax->flags &
                                             HL_HIGHLIGHT_NUMBERS) {
@@ -928,9 +892,8 @@ void editorUpdateSyntax(erow *row)
                                                 }
                                             }
 
-                                            /* ----------------------------------------------------
-                                             * Operators
-                                             * ---------------------------------------------------- */
+                                            
+
 
                                             if (is_operator_char(c) &&
                                                 !preprocessor) {
@@ -939,9 +902,8 @@ void editorUpdateSyntax(erow *row)
                                                 HL_OPERATOR;
                                                 }
 
-                                                /* ----------------------------------------------------
-                                                 * Keywords / identifiers
-                                                 * ---------------------------------------------------- */
+                                                
+
 
                                                 if (prev_sep &&
                                                     (isalpha((unsigned char)c) ||
@@ -981,11 +943,8 @@ void editorUpdateSyntax(erow *row)
                                                                     keywords[j],
                                                                     klen)) {
 
-                                                                /*
-                                                                 * Only accept the keyword if the
-                                                                 * character following it is a
-                                                                 * separator.
-                                                                 */
+                                                                
+
                                                                 if (i < row->rsize &&
                                                                     !is_separator(
                                                                         row->render[i])) {
@@ -1005,10 +964,8 @@ void editorUpdateSyntax(erow *row)
 
                                                                         found_keyword = 1;
 
-                                                                        /*
-                                                                         * Types are green, even if they
-                                                                         * happen to be followed by '('.
-                                                                         */
+                                                                        
+
                                                                         if (kw2) {
                                                                             memset(
                                                                                 &row->hl[start],
@@ -1069,9 +1026,8 @@ void editorUpdateSyntax(erow *row)
                 }
 }
 
-/* ============================================================
- * Syntax selection
- * ============================================================ */
+
+
 
 void editorSelectSyntaxHighlight(void)
 {
@@ -1129,9 +1085,8 @@ void editorSelectSyntaxHighlight(void)
     }
 }
 
-/* ============================================================
- * Row rendering
- * ============================================================ */
+
+
 
 void editorUpdateRow(erow *row)
 {
@@ -1182,9 +1137,8 @@ void editorUpdateRow(erow *row)
     editorUpdateSyntax(row);
 }
 
-/* ============================================================
- * Rows
- * ============================================================ */
+
+
 
 void editorInsertRow(
     int at,
@@ -1282,9 +1236,8 @@ void editorDelRow(int at)
     E.dirty++;
 }
 
-/* ============================================================
- * Character insertion / deletion
- * ============================================================ */
+
+
 
 void editorRowInsertChar(
     erow *row,
@@ -1365,9 +1318,8 @@ void editorRowAppendString(
     E.dirty++;
 }
 
-/* ============================================================
- * Indentation helpers
- * ============================================================ */
+
+
 
 int get_leading_indent(
     erow *row)
@@ -1390,16 +1342,8 @@ int get_leading_indent(
     return spaces;
 }
 
-/*
- * Look backwards from the cursor and determine whether
- * the meaningful character immediately before it is '{'.
- *
- * Example:
- *
- * if (x) {|
- *
- * returns true.
- */
+
+
 int cursor_preceded_by_open_brace(
     erow *row)
 {
@@ -1416,16 +1360,8 @@ int cursor_preceded_by_open_brace(
             row->chars[i] == '{';
 }
 
-/*
- * Look forward from the cursor and determine whether
- * the meaningful character is '}'.
- *
- * Example:
- *
- * {|}
- *
- * returns true.
- */
+
+
 int cursor_followed_by_closing_brace(
     erow *row)
 {
@@ -1442,33 +1378,29 @@ int cursor_followed_by_closing_brace(
             row->chars[i] == '}';
 }
 
-/*
- * Does the text before the cursor end in an opening brace?
- */
+
+
 int line_before_cursor_opens_block(
     erow *row)
 {
     return cursor_preceded_by_open_brace(row);
 }
 
-/*
- * Does the text after the cursor begin with a closing brace?
- */
+
+
 int line_after_cursor_closes_block(
     erow *row)
 {
     return cursor_followed_by_closing_brace(row);
 }
 
-/* ============================================================
- * Smart newline
- * ============================================================ */
+
+
 
 void editorInsertNewline(void)
 {
-    /*
-     * If there are no rows, create one first.
-     */
+    
+
     if (E.cy == E.numrows) {
         editorInsertRow(
             E.numrows,
@@ -1480,42 +1412,27 @@ void editorInsertNewline(void)
     erow *row =
     &E.row[E.cy];
 
-    /*
-     * Base indentation comes from the current line.
-     */
+    
+
     int base_indent =
     get_leading_indent(row);
 
-    /*
-     * Determine what is immediately before and
-     * after the cursor.
-     */
+    
+
     int opens_block =
     line_before_cursor_opens_block(row);
 
     int closes_block =
     line_after_cursor_closes_block(row);
 
-    /*
-     * We are specifically inside an automatically
-     * created pair:
-     *
-     * {|}
-     *
-     * or:
-     *
-     * {   |   }
-     */
+    
+
     int inside_empty_pair =
     opens_block &&
     closes_block;
 
-    /*
-     * Child indentation.
-     *
-     * If the current line ends with `{`,
-     * indent one level.
-     */
+    
+
     int child_indent =
     base_indent;
 
@@ -1524,9 +1441,8 @@ void editorInsertNewline(void)
         EDITOR_TAB_STOP;
     }
 
-    /*
-     * Text to the right of the cursor.
-     */
+    
+
     int right_start = E.cx;
 
     while (right_start < row->size &&
@@ -1549,43 +1465,18 @@ void editorInsertNewline(void)
 
     right[right_len] = '\0';
 
-    /*
-     * --------------------------------------------------------
-     * SPECIAL CASE:
-     *
-     * {
-     *     |
-     * }
-     *
-     * When pressing Enter between `{` and `}`, VS Code-style
-     * behavior is to create TWO lines and put the cursor on
-     * the indented middle line.
-     *
-     * Existing:
-     *
-     *     {|}
-     *
-     * becomes:
-     *
-     *     {
-     *         |
-     *     }
-     * --------------------------------------------------------
-     */
+    
+
     if (inside_empty_pair) {
-        /*
-         * Remove everything after the cursor from
-         * the original line.
-         */
+        
+
         row->size = E.cx;
         row->chars[E.cx] = '\0';
 
         editorUpdateRow(row);
 
-        /*
-         * The line containing the user's code gets
-         * one extra indentation level.
-         */
+        
+
         char *middle =
         malloc(
             child_indent + 1
@@ -1608,10 +1499,8 @@ void editorInsertNewline(void)
 
         free(middle);
 
-        /*
-         * Put the closing brace on another line at
-         * the parent's indentation level.
-         */
+        
+
         char *closing =
         malloc(
             base_indent + 2
@@ -1627,10 +1516,8 @@ void editorInsertNewline(void)
         closing[base_indent + 1] =
         '\0';
 
-        /*
-         * The original `}` was removed from the
-         * current line, so insert the closing line.
-         */
+        
+
         editorInsertRow(
             E.cy + 2,
             closing,
@@ -1647,35 +1534,18 @@ void editorInsertNewline(void)
         return;
     }
 
-    /*
-     * --------------------------------------------------------
-     * NORMAL SPLIT
-     * --------------------------------------------------------
-     */
+    
 
-    /*
-     * Remove everything to the right of the cursor
-     * from the current line.
-     */
+
+    
+
     row->size = E.cx;
     row->chars[E.cx] = '\0';
 
     editorUpdateRow(row);
 
-    /*
-     * If the new line starts with `}`, it should be
-     * aligned with the parent block instead of the
-     * child block.
-     *
-     * Example:
-     *
-     *     if (x) {
-     *         |
-     *     }
-     *
-     * Pressing Enter immediately before `}` should
-     * preserve the closing brace indentation.
-     */
+    
+
     int new_indent =
     child_indent;
 
@@ -1686,10 +1556,8 @@ void editorInsertNewline(void)
         base_indent;
         }
 
-        /*
-         * If the text to the right contains leading
-         * whitespace before `}`, strip that whitespace.
-         */
+        
+
         int right_content_start = 0;
 
         while (right_content_start < right_len &&
@@ -1701,10 +1569,8 @@ void editorInsertNewline(void)
             int right_content_len =
             right_len - right_content_start;
 
-        /*
-         * If the right-hand text starts with a closing
-         * brace, it gets the parent indentation.
-         */
+        
+
         if (right_content_start < right_len &&
             right[right_content_start] == '}') {
 
@@ -1712,9 +1578,8 @@ void editorInsertNewline(void)
             base_indent;
             }
 
-            /*
-             * Create the new line.
-             */
+            
+
             int new_len =
             new_indent +
             right_content_len;
@@ -1751,9 +1616,8 @@ void editorInsertNewline(void)
             E.cx = new_indent;
 }
 
-/* ============================================================
- * #include helper
- * ============================================================ */
+
+
 
 int editorCursorInIncludeContext(
     erow *row)
@@ -1763,9 +1627,8 @@ int editorCursorInIncludeContext(
         return 0;
         }
 
-        /*
-         * Look at the text before the cursor.
-         */
+        
+
         int len = E.cx;
 
     int i = 0;
@@ -1804,9 +1667,8 @@ int editorCursorInIncludeContext(
 
                         i += 7;
 
-                    /*
-                     * After "include", allow whitespace.
-                     */
+                    
+
                     while (i < len &&
                         isspace(
                             (unsigned char)
@@ -1814,16 +1676,13 @@ int editorCursorInIncludeContext(
                         i++;
                             }
 
-                            /*
-                             * If we are typing the header name, angle
-                             * brackets should auto-pair.
-                             */
+                            
+
                             return i <= len;
 }
 
-/* ============================================================
- * Smart character insertion
- * ============================================================ */
+
+
 
 void editorInsertChar(int c)
 {
@@ -1838,24 +1697,13 @@ void editorInsertChar(int c)
     erow *row =
     &E.row[E.cy];
 
-    /*
-     * --------------------------------------------------------
-     * Special C++ include handling
-     *
-     * #include <|
-     *
-     * becomes:
-     *
-     * #include <|>
-     * --------------------------------------------------------
-     */
+    
+
     if (c == '<' &&
         editorCursorInIncludeContext(row)) {
 
-        /*
-         * Do not create a second pair if a > is already
-         * immediately under the cursor.
-         */
+        
+
         if (E.cx < row->size &&
             row->chars[E.cx] == '>') {
 
@@ -1880,10 +1728,8 @@ void editorInsertChar(int c)
             return;
         }
 
-        /*
-         * If typing > and one is already directly under
-         * the cursor, jump over it.
-         */
+        
+
         if (c == '>' &&
             E.cx < row->size &&
             row->chars[E.cx] == '>') {
@@ -1892,9 +1738,8 @@ void editorInsertChar(int c)
         return;
             }
 
-            /*
-             * Automatic pairs.
-             */
+            
+
             char closing = 0;
 
             switch (c) {
@@ -1920,10 +1765,8 @@ void editorInsertChar(int c)
             }
 
             if (closing) {
-                /*
-                 * Don't duplicate quotes if the closing quote
-                 * already exists at the cursor.
-                 */
+                
+
                 if ((c == '"' ||
                     c == '\'') &&
                     E.cx < row->size &&
@@ -1950,9 +1793,8 @@ void editorInsertChar(int c)
                     return;
             }
 
-            /*
-             * Skip over an existing closing character.
-             */
+            
+
             if ((c == ')' ||
                 c == ']' ||
                 c == '}') &&
@@ -1972,9 +1814,8 @@ void editorInsertChar(int c)
                 E.cx++;
 }
 
-/* ============================================================
- * Delete
- * ============================================================ */
+
+
 
 void editorDelChar(void)
 {
@@ -1990,15 +1831,8 @@ void editorDelChar(void)
         erow *row =
         &E.row[E.cy];
 
-    /*
-     * Delete empty pairs:
-     *
-     * (|)
-     *
-     * becomes:
-     *
-     * |
-     */
+    
+
     if (E.cx > 0 &&
         E.cx < row->size) {
 
@@ -2048,10 +1882,8 @@ void editorDelChar(void)
             return;
         }
 
-        /*
-         * Backspace at the beginning of a line joins
-         * it with the previous line.
-         */
+        
+
         E.cx =
         E.row[E.cy - 1].size;
 
@@ -2066,9 +1898,8 @@ void editorDelChar(void)
         E.cy--;
 }
 
-/* ============================================================
- * File handling
- * ============================================================ */
+
+
 
 void editorOpen(char *filename)
 {
@@ -2227,9 +2058,8 @@ void editorSave(void)
     );
 }
 
-/* ============================================================
- * Prompt
- * ============================================================ */
+
+
 
 char *editorPrompt(
     char *prompt,
@@ -2313,9 +2143,8 @@ char *editorPrompt(
     }
 }
 
-/* ============================================================
- * Append buffer
- * ============================================================ */
+
+
 
 struct abuf {
     char *b;
@@ -2352,9 +2181,8 @@ void abFree(struct abuf *ab)
     free(ab->b);
 }
 
-/* ============================================================
- * Cursor conversion
- * ============================================================ */
+
+
 
 int editorRowCxToRx(
     erow *row,
@@ -2408,9 +2236,8 @@ int editorRowRxToCx(
     return row->size;
 }
 
-/* ============================================================
- * Search
- * ============================================================ */
+
+
 
 void editorFindCallback(
     char *query,
@@ -2559,9 +2386,8 @@ void editorFind(void)
     }
 }
 
-/* ============================================================
- * Scrolling
- * ============================================================ */
+
+
 
 void editorScroll(void)
 {
@@ -2604,9 +2430,8 @@ void editorScroll(void)
             }
 }
 
-/* ============================================================
- * Status bar
- * ============================================================ */
+
+
 
 void editorDrawStatusBar(
     struct abuf *ab)
@@ -2724,9 +2549,8 @@ void editorDrawMessageBar(
             }
 }
 
-/* ============================================================
- * Screen rendering
- * ============================================================ */
+
+
 
 void editorDrawRows(
     struct abuf *ab)
@@ -2964,18 +2788,16 @@ void editorRefreshScreen(void)
     struct abuf ab =
     ABUF_INIT;
 
-    /*
-     * Hide cursor.
-     */
+    
+
     abAppend(
         &ab,
         "\x1b[?25l",
         6
     );
 
-    /*
-     * Move cursor to top-left.
-     */
+    
+
     abAppend(
         &ab,
         "\x1b[H",
@@ -2986,9 +2808,8 @@ void editorRefreshScreen(void)
     editorDrawStatusBar(&ab);
     editorDrawMessageBar(&ab);
 
-    /*
-     * Put cursor back where it belongs.
-     */
+    
+
     char buf[32];
 
     snprintf(
@@ -3007,9 +2828,8 @@ void editorRefreshScreen(void)
         strlen(buf)
     );
 
-    /*
-     * Show cursor.
-     */
+    
+
     abAppend(
         &ab,
         "\x1b[?25h",
@@ -3025,9 +2845,8 @@ void editorRefreshScreen(void)
     abFree(&ab);
 }
 
-/* ============================================================
- * Status messages
- * ============================================================ */
+
+
 
 void editorSetStatusMessage(
     const char *fmt,
@@ -3050,9 +2869,8 @@ void editorSetStatusMessage(
     time(NULL);
 }
 
-/* ============================================================
- * Cursor movement
- * ============================================================ */
+
+
 
 void editorMoveCursor(int key)
 {
@@ -3125,9 +2943,8 @@ void editorMoveCursor(int key)
     }
 }
 
-/* ============================================================
- * Key processing
- * ============================================================ */
+
+
 
 void editorProcessKeypress(void)
 {
@@ -3139,17 +2956,15 @@ void editorProcessKeypress(void)
 
     switch (c) {
 
-        /* ----------------------------------------------------
-         * Enter
-         * ---------------------------------------------------- */
+        
+
 
         case '\r':
             editorInsertNewline();
             break;
 
-            /* ----------------------------------------------------
-             * Quit
-             * ---------------------------------------------------- */
+            
+
 
             case CTRL_KEY('q'):
 
@@ -3181,25 +2996,22 @@ void editorProcessKeypress(void)
 
                     exit(0);
 
-                    /* ----------------------------------------------------
-                     * Save
-                     * ---------------------------------------------------- */
+                    
+
 
                     case CTRL_KEY('s'):
                         editorSave();
                         break;
 
-                        /* ----------------------------------------------------
-                         * Search
-                         * ---------------------------------------------------- */
+                        
+
 
                         case CTRL_KEY('f'):
                             editorFind();
                             break;
 
-                            /* ----------------------------------------------------
-                             * Home / End
-                             * ---------------------------------------------------- */
+                            
+
 
                             case HOME_KEY:
                                 E.cx = 0;
@@ -3216,9 +3028,8 @@ void editorProcessKeypress(void)
 
                                     break;
 
-                                /* ----------------------------------------------------
-                                 * Delete
-                                 * ---------------------------------------------------- */
+                                
+
 
                                 case BACKSPACE:
                                 case CTRL_KEY('h'):
@@ -3233,9 +3044,8 @@ void editorProcessKeypress(void)
                                     editorDelChar();
                                     break;
 
-                                    /* ----------------------------------------------------
-                                     * Page movement
-                                     * ---------------------------------------------------- */
+                                    
+
 
                                     case PAGE_UP:
                                     case PAGE_DOWN: {
@@ -3273,9 +3083,8 @@ void editorProcessKeypress(void)
                                         break;
                                     }
 
-                                    /* ----------------------------------------------------
-                                     * Arrows
-                                     * ---------------------------------------------------- */
+                                    
+
 
                                     case ARROW_UP:
                                     case ARROW_DOWN:
@@ -3285,19 +3094,15 @@ void editorProcessKeypress(void)
                                         editorMoveCursor(c);
                                         break;
 
-                                        /* ----------------------------------------------------
-                                         * Escape / refresh
-                                         * ---------------------------------------------------- */
+                                        
+
 
                                         case CTRL_KEY('l'):
                                         case '\x1b':
                                             break;
 
-                                            /* ----------------------------------------------------
-                                             * TAB
-                                             *
-                                             * Insert four spaces.
-                                             * ---------------------------------------------------- */
+                                            
+
 
                                             case '\t':
 
@@ -3310,9 +3115,8 @@ void editorProcessKeypress(void)
 
         break;
 
-        /* ----------------------------------------------------
-         * Normal character
-         * ---------------------------------------------------- */
+        
+
 
         default:
             editorInsertChar(c);
@@ -3323,9 +3127,8 @@ void editorProcessKeypress(void)
     EDITOR_QUIT_TIMES;
 }
 
-/* ============================================================
- * Initialization
- * ============================================================ */
+
+
 
 void initEditor(void)
 {
@@ -3356,12 +3159,8 @@ void initEditor(void)
         die("getWindowSize");
         }
 
-        /*
-         * Reserve:
-         *
-         * 1 line for status
-         * 1 line for messages
-         */
+        
+
         E.screenrows -= 2;
 
         if (E.screenrows < 1) {
@@ -3369,9 +3168,8 @@ void initEditor(void)
         }
 }
 
-/* ============================================================
- * Main
- * ============================================================ */
+
+
 
 int main(
     int argc,

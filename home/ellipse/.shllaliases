@@ -1,4 +1,0 @@
-ll='ls -alh'
-l='ls -alh'
-edit='cedit'
-vim='vim -u NONE -U NONE -i NONE'
