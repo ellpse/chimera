@@ -62,7 +62,9 @@ std::string lowercase(const std::string& value) {
     for (size_t i = 0; i < result.length(); ++i) {
         result[i] = static_cast<char>(
             std::tolower(
-                static_cast<unsigned char>(result[i])
+                static_cast<unsigned char>(
+                    result[i]
+                )
             )
         );
     }
@@ -255,7 +257,9 @@ std::string expand_environment_variables(std::string line) {
 
         if (
             std::isalpha(
-                static_cast<unsigned char>(line[i + 1])
+                static_cast<unsigned char>(
+                    line[i + 1]
+                )
             ) ||
             line[i + 1] == '_'
         ) {
@@ -265,7 +269,9 @@ std::string expand_environment_variables(std::string line) {
                 end < line.length() &&
                 (
                     std::isalnum(
-                        static_cast<unsigned char>(line[end])
+                        static_cast<unsigned char>(
+                            line[end]
+                        )
                     ) ||
                     line[end] == '_'
                 )
@@ -1368,7 +1374,6 @@ std::string read_line(
     }
 }
 
-
 bool change_root(const std::string& new_root) {
     if (new_root.empty()) {
         std::cerr
@@ -2240,6 +2245,7 @@ void parse_shll(
 void shell_signal_handler(int signal_number) {
     if (signal_number == SIGINT) {
         const char message[] = "\n";
+
         write(
             STDOUT_FILENO,
             message,
@@ -2248,7 +2254,7 @@ void shell_signal_handler(int signal_number) {
     }
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     signal(SIGPIPE, SIG_IGN);
     signal(SIGINT, shell_signal_handler);
     signal(SIGQUIT, SIG_IGN);
@@ -2298,6 +2304,40 @@ int main() {
 
     if (!user) {
         user = "user";
+    }
+
+    if (
+        argc >= 3 &&
+        std::string(argv[1]) == "-c"
+    ) {
+        std::string command_line = argv[2];
+
+        for (int i = 3; i < argc; ++i) {
+            command_line += " ";
+            command_line += argv[i];
+        }
+
+        command_line = expand_vars(
+            command_line,
+            session_vars
+        );
+
+        command_line = expand_environment_variables(
+            command_line
+        );
+
+        std::vector<std::string> tokens =
+        tokenize_command(command_line);
+
+        if (!tokens.empty()) {
+            execute_pipeline(
+                tokens,
+                should_exit_shell,
+                session_vars
+            );
+        }
+
+        return 0;
     }
 
     std::cout << VERSION << '\n';
